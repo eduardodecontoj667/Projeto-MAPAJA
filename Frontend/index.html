@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapaJá · Concórdia SC</title>
+<style>
+  :root{
+    --verde-900:#0f3d33;
+    --verde-700:#1b5e4f;
+    --verde-500:#E8F3E5;
+    --creme:#f6f5ef;
+    --branco:#ffffff;
+    --texto:#1e2622;
+    --texto-suave:#5b665f;
+    --linha:#e2e0d6;
+    --laranja:#e08a2c;
+    --roxo:#7b5ea6;
+    --azul:#2f7fbf;
+    --vermelho:#c9524f;
+  }
+ 
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Arial", system-ui, sans-serif;
+    background:var(--branco);
+  }
+  /* ===== TOPO ===== */
+  .topo-local{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 24px;
+    font-size:13px;
+    color:var(--texto-suave);
+    background:var(--branco);
+  }
+ 
+  header.principal{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:14px 24px;
+    background:var(--branco);
+    border-bottom:1px solid var(--linha);
+  }
+  .marca{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:190px;
+    color: var(--rosa) "Mapa";
+    color: var(--verde-700) "Já";
+  }
+  .marca .icone {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--branco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.marca .icone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+  .marca h1{font-size:18px;margin:0;color:var(--verde-900);}
+  .marca span{font-size:11px;color:var(--texto-suave);display:block;}
+ 
+  .busca{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--creme);
+    border:1px solid var(--linha);
+    border-radius:999px;
+    padding:10px 18px;
+  }
+  .busca input{
+    border:none;background:transparent;outline:none;flex:1;font-size:14px;
+  }
+ 
+  .acoes-topo{display:flex;align-items:center;gap:18px;}
+  .avatar{
+    width:32px;height:32px;border-radius:50%;
+    background:var(--verde-700);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;
+  }
+ 
+  /* ===== LAYOUT PRINCIPAL ===== */
+  .app{
+    display:grid;
+    grid-template-columns:220px 1fr 360px;
+    min-height:calc(100vh - 110px);
+  }
+ 
+  nav.lateral{
+    background:var(--branco);
+    border-right:1px solid var(--linha);
+    padding:20px 12px;
+  }
+  nav.lateral button{
+    width:100%;
+    display:flex;align-items:center;gap:10px;
+    padding:11px 14px;
+    border:none;background:transparent;
+    border-radius:10px;
+    font-size:14px;color:var(--texto);
+    cursor:pointer;text-align:left;
+    margin-bottom:4px;
+  }
+  nav.lateral button.ativo{
+    background:var(--verde-700);color:#fff;
+  }
+  nav.lateral button:hover:not(.ativo){background:var(--creme);}
+ 
+  /* ===== CONTEÚDO: FILTROS + MAPA ===== */
+  main.conteudo{
+    padding:18px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .filtros{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .filtros button{
+    display:flex;align-items:center;gap:6px;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--linha);
+    background:var(--branco);
+    font-size:13px;
+    cursor:pointer;
+  }
+  .filtros button.ativo{
+    background:var(--verde-700);
+    color:#fff;border-color:var(--verde-700);
+  }
+ 
+  .area-mapa{
+    position:relative;
+    flex:1;
+    background:#e7ede4;
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--linha);
+    min-height:480px;
+  }
+  .pin{
+    position:absolute;
+    width:26px;height:26px;
+    border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:0 2px 4px rgba(0,0,0,.25);
+    border:2px solid #fff;
+  }
+  .pin span{transform:rotate(45deg);font-size:12px;color:#fff;}
+  .pin.compras{background:var(--roxo);}
+  .pin.alimentacao{background:var(--laranja);}
+  .pin.saude{background:var(--vermelho);}
+  .pin.servicos{background:var(--azul);}
+  .pin.hospedagem{background:var(--verde-700);}
+  .pin.selecionado{outline:3px solid var(--verde-900);outline-offset:2px;}
+ 
+  .controles-mapa{
+    position:absolute;right:14px;top:14px;
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .controles-mapa button{
+    width:34px;height:34px;border-radius:8px;border:1px solid var(--linha);
+    background:#fff;cursor:pointer;font-size:16px;
+  }
+ 
+  /* ===== PAINEL DE DETALHES ===== */
+  aside.detalhes{
+    background:var(--branco);
+    border-left:1px solid var(--linha);
+    padding:18px;
+    overflow-y:auto;
+  }
+  aside.detalhes .capa{
+    width:100%;height:160px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#7b5ea6,#3a2a52);
+    margin-bottom:14px;
+  }
+  aside.detalhes h2{margin:0 0 4px;font-size:20px;}
+  .avaliacao{color:var(--laranja);font-size:14px;margin-bottom:10px;}
+  .linha-info{
+    display:flex;gap:8px;align-items:flex-start;
+    font-size:14px;color:var(--texto-suave);
+    margin-bottom:10px;
+  }
+  .resumo{
+    background:#fbf1de;
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:13px;
+    margin:14px 0;
+  }
+  .botoes-acao{display:flex;gap:10px;margin-top:6px;}
+  .botoes-acao button{
+    flex:1;padding:11px;border-radius:10px;font-size:14px;cursor:pointer;
+  }
+  .btn-primario{background:var(--verde-700);color:#fff;border:none;}
+  .btn-secundario{background:#fff;border:1px solid var(--linha);}
+ 
+  @media (max-width:1000px){
+    .app{grid-template-columns:1fr;}
+    nav.lateral{display:none;}
+    aside.detalhes{border-left:none;border-top:1px solid var(--linha);}
+  }
+
+  .lucide{width:18px;height:18px;stroke-width:2;flex-shrink:0;}
+  .icone-bolinha{display:flex;align-items:center;justify-content:center;}
+  .acoes-topo .localizacao{display:flex;align-items:center;gap:7px;white-space:nowrap;}
+  .avatar{width:auto;min-width:32px;padding:0 10px;border-radius:999px;}
+  .pin .lucide{width:13px;height:13px;color:#fff;stroke-width:2.5;transform:rotate(45deg);}
+  .avaliacao{display:flex;align-items:center;gap:5px;}
+  .linha-info{display:flex;align-items:flex-start;}
+  .linha-info .lucide{margin-top:1px;}
+  .resumo strong{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+  .botoes-acao button{display:flex;align-items:center;justify-content:center;gap:7px;}
+  .filtros button .lucide{width:16px;height:16px;}
+  .controles-mapa button{display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+
+  <div class="topo-local">Concórdia · SC · Brasil</div>
+
+  <header class="principal">
+    <div class="marca">
+      <div class="icone">
+        <img src="./logo mapaja.png" alt="Logo Mapaja">
+      </div>
+      <div>
+        <h1>MapaJá</h1>
+        <span>Descubra. Encontre. Chegue.</span>
+      </div>
+    </div>
+
+    <div class="busca">
+      <input type="text" placeholder="Buscar estabelecimento, categoria ou bairro em Concórdia...">
+      <div class="icone-bolinha">
+        <i data-lucide="search"></i>
+      </div>
+    </div>
+
+    <div class="acoes-topo">
+      <span class="localizacao">
+        <i data-lucide="map-pin"></i>
+        Usar minha localização
+      </span>
+      <div class="avatar">Entrar</div>
+    </div>
+  </header>
+
+  <div class="app">
+
+    <nav class="lateral">
+      <button class="ativo"><i data-lucide="compass"></i> Explorar</button>
+      <button><i data-lucide="layout-grid"></i> Categorias</button>
+      <button><i data-lucide="heart"></i> Favoritos</button>
+      <button><i data-lucide="star"></i> Avaliações</button>
+      <button><i data-lucide="route"></i> Rotas</button>
+      <button><i data-lucide="history"></i> Histórico</button>
+      <button><i data-lucide="settings"></i> Configurações</button>
+    </nav>
+
+    <main class="conteudo">
+      <div class="filtros">
+        <button class="ativo" data-cat="todas"><i data-lucide="grid-2x2"></i> Todas</button>
+        <button data-cat="alimentacao"><i data-lucide="utensils"></i> Alimentação</button>
+        <button data-cat="saude"><i data-lucide="heart-pulse"></i> Saúde</button>
+        <button data-cat="hospedagem"><i data-lucide="bed-double"></i> Hospedagem</button>
+        <button data-cat="servicos"><i data-lucide="wrench"></i> Serviços</button>
+        <button data-cat="compras"><i data-lucide="shopping-bag"></i> Compras</button>
+      </div>
+
+      <div class="area-mapa" id="mapa">
+        <div class="controles-mapa">
+          <button type="button" aria-label="Aumentar zoom"><i data-lucide="plus"></i></button>
+          <button type="button" aria-label="Diminuir zoom"><i data-lucide="minus"></i></button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="detalhes" id="painel"></aside>
+
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    const locais = [
+    {id:1, nome:"Shopping Concórdia", categoria:"compras", nota:4.5, avaliacoes:312,
+     endereco:"Av. dos Pioneiros, 2200 - Concórdia - SC", distancia:"2,1 km",
+     horario:"08:00 – 18:00", telefone:"(49) 3442-3355",
+     resumo:"Lojas, praça de alimentação e cinema.",
+     x:70, y:38},
+    {id:2, nome:"Restaurante do Vale", categoria:"alimentacao", nota:4.2, avaliacoes:88,
+     endereco:"Rua das Palmeiras, 120 - Concórdia - SC", distancia:"1,0 km",
+     horario:"11:00 – 15:00", telefone:"(49) 3441-1122",
+     resumo:"Almoço self-service e pratos regionais.",
+     x:55, y:30},
+    {id:3, nome:"Clínica Vida Saudável", categoria:"saude", nota:4.8, avaliacoes:150,
+     endereco:"Rua Marechal Deodoro, 45 - Concórdia - SC", distancia:"0,8 km",
+     horario:"07:00 – 19:00", telefone:"(49) 3441-9090",
+     resumo:"Atendimento clínico geral e exames.",
+     x:44, y:35},
+    {id:4, nome:"Pousada Rio Manso", categoria:"hospedagem", nota:4.6, avaliacoes:64,
+     endereco:"Estrada Geral, 500 - Concórdia - SC", distancia:"3,4 km",
+     horario:"Recepção 24h", telefone:"(49) 3443-2211",
+     resumo:"Hospedagem tranquila às margens do rio.",
+     x:80, y:20},
+    {id:5, nome:"Auto Elétrica Central", categoria:"servicos", nota:4.1, avaliacoes:40,
+     endereco:"Rua Getúlio Vargas, 300 - Concórdia - SC", distancia:"1,6 km",
+     horario:"08:00 – 18:00", telefone:"(49) 3441-5566",
+     resumo:"Manutenção elétrica automotiva.",
+     x:35, y:55}
+  ];
+
+    const mapa = document.getElementById("mapa");
+    const painel = document.getElementById("painel");
+    const botoesFiltro = document.querySelectorAll(".filtros button");
+
+    const iconePorCategoria = {
+      compras: "shopping-bag",
+      alimentacao: "utensils",
+      saude: "heart-pulse",
+      hospedagem: "bed-double",
+      servicos: "wrench"
+    };
+
+    function atualizarIcones() {
+      lucide.createIcons();
+    }
+
+    function desenharPins(categoriaAtiva) {
+      mapa.querySelectorAll(".pin").forEach(p => p.remove());
+
+      locais
+        .filter(local => categoriaAtiva === "todas" || local.categoria === categoriaAtiva)
+        .forEach(local => {
+          const pin = document.createElement("div");
+          pin.className = "pin " + local.categoria;
+          pin.style.left = local.x + "%";
+          pin.style.top = local.y + "%";
+          pin.setAttribute("title", local.nome);
+
+          pin.innerHTML = `<i data-lucide="${iconePorCategoria[local.categoria]}"></i>`;
+
+          pin.addEventListener("click", () => mostrarDetalhes(local, pin));
+          mapa.appendChild(pin);
+        });
+
+      atualizarIcones();
+    }
+
+    function mostrarDetalhes(local, pinEl) {
+      document.querySelectorAll(".pin").forEach(p => p.classList.remove("selecionado"));
+      if (pinEl) pinEl.classList.add("selecionado");
+
+      painel.innerHTML = `
+        <div class="capa"></div>
+        <h2>${local.nome}</h2>
+
+        <div class="avaliacao">
+          <i data-lucide="star"></i>
+          ${local.nota.toFixed(1)} (${local.avaliacoes})
+        </div>
+
+        <div class="linha-info">
+          <i data-lucide="map-pin"></i>
+          <span>${local.endereco} · ${local.distancia}</span>
+        </div>
+
+        <div class="linha-info">
+          <i data-lucide="clock-3"></i>
+          <span>Hoje: ${local.horario}</span>
+        </div>
+
+        <div class="linha-info">
+          <i data-lucide="phone"></i>
+          <span>${local.telefone}</span>
+        </div>
+
+        <div class="resumo">
+          <strong><i data-lucide="sparkles"></i> Resumo inteligente</strong>
+          ${local.resumo}
+        </div>
+
+        <div class="botoes-acao">
+          <button class="btn-primario" type="button">
+            <i data-lucide="navigation"></i> Como chegar
+          </button>
+          <button class="btn-secundario" type="button">
+            <i data-lucide="heart"></i> Favoritar
+          </button>
+        </div>
+      `;
+
+      atualizarIcones();
+    }
+
+    botoesFiltro.forEach(btn => {
+      btn.addEventListener("click", () => {
+        botoesFiltro.forEach(b => b.classList.remove("ativo"));
+        btn.classList.add("ativo");
+        desenharPins(btn.dataset.cat);
+      });
+    });
+
+    // Inicialização
+    desenharPins("todas");
+    mostrarDetalhes(locais[0]);
+    atualizarIcones();
+  </script>
+
+</body>
+</html>
+

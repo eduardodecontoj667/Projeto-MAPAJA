@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  display: flex;
+}
+
+header {
+  background: #1D6D52;
+  color: white;
+  padding: 10px;
+  width: 100%;
+}
+
+aside {
+  width: 200px;
+  background: #f0f0f0;
+  height: 100vh;
+  padding: 20px;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+}
