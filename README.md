@@ -1,31 +1,44 @@
-# Projeto-MAPAJA
-Projeto que estamos realizando na faculdade,
 # MapaJá
 
-Projeto de extensão para facilitar a localização de serviços essenciais em Concórdia.
+Projeto de extensão para localizar serviços essenciais em Concórdia.
 
-## Estado atual
+## Código
 
-Protótipo web com mapa Leaflet e servidor Express. Cadastro de pontos no mapa é experimental; integração com banco de dados, autenticação e regras de acesso ainda precisam ser implementadas.
+- `Back/app.js`: servidor Express.
+- `Back/src/`: configuração, conexão PostgreSQL, consultas, validações e rotas.
+- `Back/public/`: interface ativa, mapa, busca, filtros e detalhes.
+- `Back/scripts/`: verificação da conexão e das tabelas.
+- `Back/test/`: testes da API e integração com PostgreSQL.
+- `Frontend/`: protótipo visual anterior já existente no repositório.
 
-## Executar localmente
+## Executar
 
-Instale o Node.js com npm. No terminal, a partir da pasta do projeto:
+Use Node.js 22 ou superior e um banco PostgreSQL já criado com as tabelas do projeto. As consultas usam o esquema aplicado, com IDs inteiros (`id_estabelecimento`, `id_categoria`, `id_subcategoria`).
 
 ```powershell
 cd Back
 npm ci
-node app.js
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
-Abra http://localhost:3000 no Chrome ou Edge e mantenha o terminal aberto. Para encerrar o servidor, pressione Ctrl + C.
+Preencha `Back/.env` com os dados do seu banco. O modelo usa `localhost:5432`, banco `mapaja` e usuário `postgres`; a senha deve ser preenchida apenas no `.env` local.
 
-## Estrutura
+```powershell
+npm run db:check
+npm start
+```
 
-- `Back/app.js`: servidor Express.
-- `Back/public/index.html`: interface do mapa.
-- `Back/package.json` e `Back/package-lock.json`: dependências do projeto.
+Abra http://localhost:3000. O mapa consulta os estabelecimentos ativos pela API, com busca por nome/palavras-chave e filtro por categoria. Um banco sem locais retorna uma lista vazia. O cadastro administrativo e a autenticação serão implementados nas próximas etapas.
 
-Os arquivos do banco de dados não estão incluídos nesta pasta do projeto.
+Rotas públicas: `GET /api/health`, `GET /api/categorias` e `GET /api/estabelecimentos`. A consulta aceita `busca`, `categoria_id` inteiro positivo, `limite` de 1 a 100 e `deslocamento` inteiro maior ou igual a zero.
 
-A pasta Frontend cont�m a interface j� existente no reposit�rio. O servidor atual entrega Back/public; a integra��o entre as duas interfaces ainda est� pendente.
+## Testar
+
+```powershell
+npm test
+npm run test:integration
+```
+
+A suíte tem 29 testes unitários e 10 de integração. A integração usa o banco configurado no `.env` e reverte os registros de teste com `ROLLBACK`.
+
+O repositório inclui código, recursos da interface, dependências declaradas e o modelo de configuração sem senha. O banco em si, senhas locais, `node_modules` e arquivos temporários ficam fora da publicação. Os comandos não criam tabelas nem inserem um catálogo permanente automaticamente.

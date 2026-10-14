@@ -1,64 +1,76 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
-<style>
-#map {
-    height: 100vh;
-}
-</style>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-
-    body{
-        margin: 0;
-    }
-#map {
-    height: 100vh;
-}
-</style>
-</head>
-
- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1b5e4f">
+  <title>MapaJá · Explore Concórdia</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script defer src="/app.js"></script>
 </head>
 <body>
+  <a class="skip-link" href="#resultados">Ir para os resultados</a>
+  <header class="header">
+    <a class="brand" href="/" aria-label="MapaJá, página inicial">
+      <img src="/logo-mapaja.png" width="56" height="56" alt="">
+      <span><strong>MapaJá</strong><span>Descubra. Encontre. Chegue.</span></span>
+    </a>
+    <form id="busca-form" class="search-form" role="search">
+      <label class="visually-hidden" for="busca">Buscar estabelecimentos</label>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg>
+      <input id="busca" type="search" maxlength="160" placeholder="O que você procura em Concórdia?" autocomplete="off">
+      <button type="submit" class="button primary">Buscar</button>
+    </form>
+    <span class="city"><span aria-hidden="true">●</span> Concórdia · SC</span>
+  </header>
 
- <div id="map"></div>
+  <div class="toolbar">
+    <div class="toolbar-title"><span class="eyebrow">EXPLORAR A CIDADE</span><h1>Encontre seu próximo destino</h1></div>
+    <div class="filter-control">
+      <label for="categoria">Categoria</label>
+      <select id="categoria" disabled><option value="">Todas as categorias</option></select>
+      <button id="limpar-filtros" class="button subtle" type="button" hidden>Limpar filtros</button>
+    </div>
+  </div>
+  <div id="categorias-aviso" class="notice category-notice" hidden>
+    <span id="categorias-mensagem"></span>
+    <button id="repetir-categorias" class="text-button" type="button">Tentar novamente</button>
+  </div>
 
+  <main class="app-layout">
+    <section id="resultados" class="results-panel" aria-labelledby="resultados-titulo" tabindex="-1">
+      <div class="panel-heading"><h2 id="resultados-titulo">Estabelecimentos</h2><span id="quantidade" class="count">—</span></div>
+      <p id="resultado-status" class="result-status" role="status" aria-live="polite">Carregando estabelecimentos…</p>
+      <div id="resultados-estado" class="empty-state" hidden><h3 id="estado-titulo"></h3><p id="estado-descricao"></p></div>
+      <ul id="locais-lista" class="places-list" aria-label="Estabelecimentos encontrados"></ul>
+      <div class="result-actions">
+        <button id="repetir-busca" class="button secondary" type="button" hidden>Tentar novamente</button>
+        <button id="carregar-mais" class="button secondary" type="button" hidden>Carregar mais</button>
+      </div>
+    </section>
 
-<script>
-    var map = L.map('map').setView([-27.23389, -52.02778], 13);
+    <section class="map-panel" aria-label="Localização dos estabelecimentos">
+      <div id="map" aria-label="Mapa de estabelecimentos"></div>
+      <div class="map-caption"><span class="map-dot" aria-hidden="true"></span> Explore os locais no mapa</div>
+      <div id="mapa-aviso" class="notice map-notice" role="status" hidden>
+        <span id="mapa-mensagem"></span>
+        <button id="repetir-mapa" class="text-button" type="button">Tentar novamente</button>
+      </div>
+    </section>
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-    L.marker([-27.23389, -52.02778])
-  .addTo(map)
-  .bindPopup('Meu primeiro ponto no MapaJá!');
- map.on('click', function (evento) {
-  const nome = prompt('Qual é o nome deste local?');
-
-  if (!nome || !nome.trim()) {
-    return;
-  }
-
-  const mensagem = document.createElement('span');
-  mensagem.textContent = nome.trim();
-
-  L.marker(evento.latlng)
-    .addTo(map)
-    .bindPopup(mensagem)
-    .openPopup();
-});
-</script>
+    <aside id="detalhes" class="details-panel" aria-labelledby="detalhes-titulo">
+      <div id="detalhes-vazio" class="detail-placeholder">
+        <div class="placeholder-pin" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></div>
+        <h2 id="detalhes-titulo">Cada lugar, uma descoberta</h2>
+        <p>Selecione um estabelecimento na lista ou no mapa para consultar suas informações.</p>
+      </div>
+      <div id="detalhes-conteudo" hidden></div>
+    </aside>
+  </main>
+  <noscript><p class="noscript">Ative o JavaScript no navegador para pesquisar e visualizar os estabelecimentos.</p></noscript>
 </body>
 </html>

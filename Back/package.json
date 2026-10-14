@@ -2,15 +2,22 @@
   "name": "back",
   "version": "1.0.0",
   "description": "",
-  "main": "back.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "db:check": "node scripts/check-database.js",
+    "test": "node --test test/catalog-api.test.js",
+    "test:integration": "node --test test/catalog-api.integration.test.js"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.23.1"
   }
 }
